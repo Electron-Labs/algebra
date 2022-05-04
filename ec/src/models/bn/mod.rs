@@ -164,51 +164,52 @@ impl<P: BnParameters> PairingEngine for Bn<P> {
             // r = f^(p^6 - 1)
             let mut r = f1 * &f2;
 
+            r
             // f2 = f^(p^6 - 1)
-            f2 = r;
-            // r = f^((p^6 - 1)(p^2))
-            r.frobenius_map(2);
-
-            // r = f^((p^6 - 1)(p^2) + (p^6 - 1))
-            // r = f^((p^6 - 1)(p^2 + 1))
-            r *= &f2;
-
-            // Hard part follows Laura Fuentes-Castaneda et al. "Faster hashing to G2"
-            // by computing:
+            // f2 = r;
+            // // r = f^((p^6 - 1)(p^2))
+            // r.frobenius_map(2);
             //
-            // result = elt^(q^3 * (12*z^3 + 6z^2 + 4z - 1) +
-            //               q^2 * (12*z^3 + 6z^2 + 6z) +
-            //               q   * (12*z^3 + 6z^2 + 4z) +
-            //               1   * (12*z^3 + 12z^2 + 6z + 1))
-            // which equals
+            // // r = f^((p^6 - 1)(p^2) + (p^6 - 1))
+            // // r = f^((p^6 - 1)(p^2 + 1))
+            // r *= &f2;
             //
-            // result = elt^( 2z * ( 6z^2 + 3z + 1 ) * (q^4 - q^2 + 1)/r ).
-
-            let y0 = Self::exp_by_neg_x(r);
-            let y1 = y0.cyclotomic_square();
-            let y2 = y1.cyclotomic_square();
-            let mut y3 = y2 * &y1;
-            let y4 = Self::exp_by_neg_x(y3);
-            let y5 = y4.cyclotomic_square();
-            let mut y6 = Self::exp_by_neg_x(y5);
-            y3.conjugate();
-            y6.conjugate();
-            let y7 = y6 * &y4;
-            let mut y8 = y7 * &y3;
-            let y9 = y8 * &y1;
-            let y10 = y8 * &y4;
-            let y11 = y10 * &r;
-            let mut y12 = y9;
-            y12.frobenius_map(1);
-            let y13 = y12 * &y11;
-            y8.frobenius_map(2);
-            let y14 = y8 * &y13;
-            r.conjugate();
-            let mut y15 = r * &y9;
-            y15.frobenius_map(3);
-            let y16 = y15 * &y14;
-
-            y16
+            // // Hard part follows Laura Fuentes-Castaneda et al. "Faster hashing to G2"
+            // // by computing:
+            // //
+            // // result = elt^(q^3 * (12*z^3 + 6z^2 + 4z - 1) +
+            // //               q^2 * (12*z^3 + 6z^2 + 6z) +
+            // //               q   * (12*z^3 + 6z^2 + 4z) +
+            // //               1   * (12*z^3 + 12z^2 + 6z + 1))
+            // // which equals
+            // //
+            // // result = elt^( 2z * ( 6z^2 + 3z + 1 ) * (q^4 - q^2 + 1)/r ).
+            //
+            // let y0 = Self::exp_by_neg_x(r);
+            // let y1 = y0.cyclotomic_square();
+            // let y2 = y1.cyclotomic_square();
+            // let mut y3 = y2 * &y1;
+            // let y4 = Self::exp_by_neg_x(y3);
+            // let y5 = y4.cyclotomic_square();
+            // let mut y6 = Self::exp_by_neg_x(y5);
+            // y3.conjugate();
+            // y6.conjugate();
+            // let y7 = y6 * &y4;
+            // let mut y8 = y7 * &y3;
+            // let y9 = y8 * &y1;
+            // let y10 = y8 * &y4;
+            // let y11 = y10 * &r;
+            // let mut y12 = y9;
+            // y12.frobenius_map(1);
+            // let y13 = y12 * &y11;
+            // y8.frobenius_map(2);
+            // let y14 = y8 * &y13;
+            // r.conjugate();
+            // let mut y15 = r * &y9;
+            // y15.frobenius_map(3);
+            // let y16 = y15 * &y14;
+            //
+            // y16
         })
     }
 }
